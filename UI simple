@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Null UI - Open Source Interface</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS para agilidade e responsividade -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        creme: {
+                            claro: '#FDFBF7',
+                            medio: '#EAE0C8',
+                            escuro: '#DCD0B6',
+                        },
+                        texto: '#2C2C2C',
+                        destaque: '#D97757', // Laranja suave
+                        dourado: '#C8A951',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #2C2C2C;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar Customizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FDFBF7; }
+        ::-webkit-scrollbar-thumb { 
+            background: #EAE0C8; 
+            border-radius: 10px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #DCD0B6; }
+
+        /* Animações */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glassmorphism Suave */
+        .glass {
+            background: rgba(253, 251, 247, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Typing Indicator */
+        .dot { animation: wave 1.3s linear infinite; }
+        .dot:nth-child(2) { animation-delay: -1.1s; }
+        .dot:nth-child(3) { animation-delay: -0.9s; }
+        @keyframes wave {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Header Fixo -->
+    <header class="glass sticky top-0 z-50 border-b border-creme-medio px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-destaque rounded-lg flex items-center justify-center shadow-sm">
+                <span class="text-white font-bold text-xs">N</span>
+            </div>
+            <h1 class="text-lg font-semibold tracking-tight text-texto">Null <span class="font-light opacity-60">UI</span></h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="clearBtn" class="text-xs font-medium text-texto/60 hover:text-destaque transition-colors uppercase tracking-widest">
+                Limpar
+            </button>
+        </div>
+    </header>
+
+    <!-- Área Principal (Chat/Dashboard) -->
+    <main id="contentArea" class="flex-1 overflow-y-auto p-6 md:p-12 space-y-8">
+        <!-- Welcome Card -->
+        <div class="max-w-3xl mx-auto fade-in">
+            <div class="bg-white border border-creme-medio p-8 rounded-3xl shadow-sm">
+                <h2 class="text-2xl font-semibold mb-4 text-texto">Bem-vindo ao Projeto Null</h2>
+                <p class="text-texto/70 leading-relaxed mb-6">
+                    Esta é uma interface open-source minimalista projetada para clareza e foco. 
+                    Use este espaço para construir dashboards, chats de IA ou ferramentas de produtividade.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-creme-claro border border-creme-medio rounded-2xl">
+                        <span class="text-dourado block mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                        </span>
+                        <h3 class="font-medium text-sm">Seguro & Privado</h3>
+                    </div>
+                    <div class="p-4 bg-creme-claro border border-creme-medio rounded-2xl">
+                        <span class="text-destaque block mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+                        </span>
+                        <h3 class="font-medium text-sm">Alta Performance</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container de Mensagens Dinâmicas -->
+        <div id="messageContainer" class="max-w-3xl mx-auto space-y-6"></div>
+
+        <!-- Indicador de Carregamento (Oculto por padrão) -->
+        <div id="loadingIndicator" class="max-w-3xl mx-auto hidden">
+            <div class="flex gap-1 px-4 py-2 bg-creme-medio/30 w-max rounded-full">
+                <div class="w-1.5 h-1.5 bg-texto/40 rounded-full dot"></div>
+                <div class="w-1.5 h-1.5 bg-texto/40 rounded-full dot"></div>
+                <div class="w-1.5 h-1.5 bg-texto/40 rounded-full dot"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer / Input Area -->
+    <footer class="p-6 bg-creme-claro border-t border-creme-medio">
+        <form id="nullForm" class="max-w-3xl mx-auto relative group">
+            <input 
+                type="text" 
+                id="userInput"
+                placeholder="Escreva sua mensagem aqui..."
+                class="w-full bg-white border border-creme-medio rounded-2xl py-4 pl-6 pr-16 focus:outline-none focus:ring-2 focus:ring-dourado/20 focus:border-dourado transition-all shadow-sm text-texto placeholder:text-texto/40"
+            >
+            <button 
+                type="submit"
+                class="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-creme-escuro hover:bg-dourado text-texto rounded-xl transition-all duration-300 flex items-center justify-center group-hover:shadow-md"
+                aria-label="Enviar"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            </button>
+        </form>
+        <div class="text-center mt-4">
+            <span class="text-[10px] uppercase tracking-[0.2em] text-texto/30 font-medium">Null Interface System &bull; Open Source 2024</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
